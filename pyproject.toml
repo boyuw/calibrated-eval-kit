@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "calibrated-eval-kit"
+version = "0.1.0"
+description = "A minimal toolkit for evaluating LLM/agent outputs with calibrated judges."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "MIT" }
+authors = [{ name = "Boyu Wang" }]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7"]
+
+[tool.setuptools.packages.find]
+include = ["evalkit*"]
+
+[tool.setuptools.package-data]
+evalkit = ["examples/*.jsonl"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

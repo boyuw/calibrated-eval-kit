@@ -1,0 +1,24 @@
+{"id": "item-01", "prompt": "What is the capital of Australia?", "reference": "Canberra", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.98}
+{"id": "item-02", "prompt": "What is 17 + 25?", "reference": "42", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.99}
+{"id": "item-03", "prompt": "Which planet has the largest ring system?", "reference": "Saturn", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.95}
+{"id": "item-04", "prompt": "What year did the Berlin Wall fall?", "reference": "1989", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.93}
+{"id": "item-05", "prompt": "What is the chemical symbol for gold?", "reference": "Au", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.97}
+{"id": "item-06", "prompt": "How many sides does a hexagon have?", "reference": "6", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.9}
+{"id": "item-07", "prompt": "What is the largest ocean on Earth?", "reference": "Pacific Ocean", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.96}
+{"id": "item-08", "prompt": "Who wrote the play Romeo and Juliet?", "reference": "William Shakespeare", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.88}
+{"id": "item-09", "prompt": "What is the square root of 144?", "reference": "12", "human_label": "incorrect", "judge_label": "incorrect", "judge_confidence": 0.92}
+{"id": "item-10", "prompt": "Which gas makes up most of Earth's atmosphere?", "reference": "Nitrogen", "human_label": "incorrect", "judge_label": "incorrect", "judge_confidence": 0.85}
+{"id": "item-11", "prompt": "What is the currency of Japan?", "reference": "Yen", "human_label": "incorrect", "judge_label": "incorrect", "judge_confidence": 0.81}
+{"id": "item-12", "prompt": "How many minutes are in 2.5 hours?", "reference": "150", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.83}
+{"id": "item-13", "prompt": "Which element has atomic number 1?", "reference": "Hydrogen", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.79}
+{"id": "item-14", "prompt": "What is the freezing point of water in Fahrenheit?", "reference": "32 degrees", "human_label": "incorrect", "judge_label": "incorrect", "judge_confidence": 0.77}
+{"id": "item-15", "prompt": "Which data structure serves elements in FIFO order?", "reference": "Queue", "human_label": "incorrect", "judge_label": "correct", "judge_confidence": 0.94}
+{"id": "item-16", "prompt": "What is 15% of 200?", "reference": "30", "human_label": "incorrect", "judge_label": "correct", "judge_confidence": 0.91}
+{"id": "item-17", "prompt": "Which sorting algorithm has O(n log n) average-case time and uses divide and conquer?", "reference": "Merge sort", "human_label": "correct", "judge_label": "incorrect", "judge_confidence": 0.89}
+{"id": "item-18", "prompt": "What does HTTP stand for?", "reference": "HyperText Transfer Protocol", "human_label": "incorrect", "judge_label": "correct", "judge_confidence": 0.96}
+{"id": "item-19", "prompt": "Which country hosted the 2016 Summer Olympics?", "reference": "Brazil", "human_label": "correct", "judge_label": "incorrect", "judge_confidence": 0.58}
+{"id": "item-20", "prompt": "What is the derivative of x^3 with respect to x?", "reference": "3x^2", "human_label": "incorrect", "judge_label": "correct", "judge_confidence": 0.52}
+{"id": "item-21", "prompt": "Which organ in the human body produces insulin?", "reference": "Pancreas", "human_label": "correct", "judge_label": "incorrect", "judge_confidence": 0.63}
+{"id": "item-22", "prompt": "What is the time complexity of binary search on a sorted array?", "reference": "O(log n)", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.61}
+{"id": "item-23", "prompt": "Which protocol is primarily used to send email?", "reference": "SMTP", "human_label": "incorrect", "judge_label": "incorrect", "judge_confidence": 0.57}
+{"id": "item-24", "prompt": "What is the boiling point of water at sea level in Celsius?", "reference": "100 degrees", "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.68}
