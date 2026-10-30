@@ -54,9 +54,13 @@ because reasonable teams disagree.
 
 ## Deliberately out of scope
 
-- **No judge clients.** The kit evaluates judge *outputs*; calling an LLM
-  to produce them is the caller's job. This keeps the kit model-agnostic
-  and testable offline.
+- **No judge clients — but a defined adapter seam.** The kit evaluates
+  judge *outputs*; calling an LLM to produce them is the caller's job.
+  `evalkit/judges.py` defines exactly where that job plugs in
+  (`judge(prompt, reference) -> JudgeOutput`) and ships `MockJudge` as
+  the offline stand-in, so the boundary is a documented interface
+  rather than an ad-hoc conversion in each caller. This keeps the kit
+  model-agnostic and testable offline.
 - **No statistics beyond point estimates.** No confidence intervals, no
   bootstrap, no significance tests. On 24 items a kappa without an
   interval is a conversation starter, not a result — the kit does not

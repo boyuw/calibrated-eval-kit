@@ -64,9 +64,22 @@ the judge label is the judge's verdict on the same output.
 | Module | What it does |
 |---|---|
 | `evalkit.data` | Load and validate items from JSONL. |
+| `evalkit.judges` | Judge-adapter interface (`JudgeOutput`, `MockJudge`, `judge_items`): how a real judge's verdict becomes an `Item`. |
 | `evalkit.calibration` | Agreement, Cohen's kappa, reliability bins, ECE, full report. |
 | `evalkit.splits` | Hash-based deterministic dev/held-out split; leakage check by id and by normalized prompt text. |
 | `evalkit.trajectory` | Positional step scoring of tool-use traces against an expected sequence + final-state predicate. |
+
+## Plugging in a real judge
+
+The kit never calls a model. Implement the `JudgeAdapter` interface —
+`judge(prompt, reference) -> JudgeOutput(label, confidence)` — around
+your judge: format a judging prompt, call the model, parse its verdict
+and confidence, and return them. `judge_items` turns a list of cases
+into `Item`s that the calibration metrics consume directly. `MockJudge`
+is the offline stand-in: canned verdicts per prompt, with an explicit
+default for unseen prompts (it never silently reuses a canned answer),
+so tests and examples run with no network and no keys. See
+`evalkit/judges.py` for the full contract and a sketch of a real adapter.
 
 ## Scope
 
