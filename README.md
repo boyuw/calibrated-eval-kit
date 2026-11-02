@@ -30,7 +30,9 @@ root — `python -m evalkit.demo` works in place.
 
 ## The bundled example
 
-`evalkit/examples/items.jsonl` holds 24 synthetic judged items. The
+`evalkit/examples/items.jsonl` holds 24 synthetic judged items, and
+`evalkit/examples/code_review.jsonl` adds a second domain — 12
+code-review judgments — in the same format. The
 fixture judge agrees with humans on 17 of 24 — and is *overconfident on
 several of its errors*, which is exactly the failure mode the calibration
 report exists to surface:
