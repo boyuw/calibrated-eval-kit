@@ -47,6 +47,12 @@ needs no schema language. Known quirk, accepted at this scale:
 `isinstance(True, int)` is `True`, so a boolean would pass an `int`
 check. A production system would want a stricter validator.
 
+**Exports keep empty bins, with a signed gap.** The reliability-diagram
+export (`evalkit.export`) is the same binning as the report, serialized
+for embedding or plotting. Empty bins stay in the table with null/blank
+metrics rather than vanishing, and the gap column is accuracy minus mean
+confidence, so a negative gap reads as overconfidence in that bin.
+
 **Weights are parameters with stated defaults.** The trajectory default
 (0.8 steps / 0.2 final state) reflects a belief: process matters more
 than outcome, but outcome still matters. It is a parameter precisely

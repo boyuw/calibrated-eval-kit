@@ -9,6 +9,7 @@ from pathlib import Path
 
 from .calibration import calibration_report
 from .data import load_items
+from .export import reliability_table_csv
 from .trajectory import ExpectedStep, Trace, score_trajectory
 
 EXAMPLES = Path(__file__).parent / "examples" / "items.jsonl"
@@ -31,6 +32,12 @@ def print_calibration() -> None:
         print(f"[{b.lower:.1f}, {b.upper:.1f}{close}{'':<5}{b.count:>4}"
               f"{b.mean_confidence:>11.2f}{b.accuracy:>10.2f}")
     print()
+
+
+def print_reliability_export() -> None:
+    items = load_items(EXAMPLES)
+    print("== Reliability diagram data (CSV) ==")
+    print(reliability_table_csv(items, n_bins=5), end="")
 
 
 def print_trajectory() -> None:
@@ -62,6 +69,7 @@ def print_trajectory() -> None:
 
 def main() -> None:
     print_calibration()
+    print_reliability_export()
     print_trajectory()
 
 

@@ -68,6 +68,7 @@ the judge label is the judge's verdict on the same output.
 | `evalkit.data` | Load and validate items from JSONL. |
 | `evalkit.judges` | Judge-adapter interface (`JudgeOutput`, `MockJudge`, `judge_items`): how a real judge's verdict becomes an `Item`. |
 | `evalkit.calibration` | Agreement, Cohen's kappa, reliability bins, ECE, full report. |
+| `evalkit.export` | Reliability-diagram data export: per-bin table (mean confidence, accuracy, count, gap) as rows, CSV, or JSON — e.g. `reliability_table_csv(items)` for README embedding. Empty bins are kept, with null/blank metrics. |
 | `evalkit.splits` | Hash-based deterministic dev/held-out split; leakage check by id and by normalized prompt text. |
 | `evalkit.trajectory` | Positional step scoring of tool-use traces against an expected sequence + final-state predicate. |
 
