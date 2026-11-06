@@ -3,6 +3,7 @@
 from .calibration import (
     CalibrationReport,
     agreement_rate,
+    brier_score,
     calibration_report,
     cohens_kappa,
     expected_calibration_error,
@@ -31,6 +32,7 @@ __all__ = [
     "MockJudge",
     "TrajectoryScore",
     "agreement_rate",
+    "brier_score",
     "calibration_report",
     "check_no_leakage",
     "cohens_kappa",

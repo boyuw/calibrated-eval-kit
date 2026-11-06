@@ -2,8 +2,9 @@
 
 A judge that says "90% confident" should be right about 90% of the time.
 These functions measure how far a judge is from that ideal: raw agreement,
-chance-corrected agreement (Cohen's kappa), and reliability binning with
-an expected calibration error (ECE) summary.
+chance-corrected agreement (Cohen's kappa), reliability binning with an
+expected calibration error (ECE) summary, and the Brier score — the mean
+squared error of the stated confidence against correctness.
 """
 
 from __future__ import annotations
@@ -87,6 +88,24 @@ def expected_calibration_error(items: list[Item], n_bins: int = 5) -> float:
     )
 
 
+def brier_score(items: list[Item]) -> float:
+    """Brier score: mean squared error of confidence against correctness.
+
+    (1/n) * sum((confidence_i - correct_i)^2), where correct_i is 1 when
+    the judge's label matches the human label and 0 otherwise. A proper
+    scoring rule: it is minimised in expectation only by stating the
+    true probability of being right. Unlike ECE it needs no binning and
+    it penalises overconfidence on individual items, not just on bin
+    averages — but it mixes calibration with resolution, so read it
+    alongside ECE, not instead of it. 0 is perfect, 1 is worst.
+    """
+    _require(items)
+    return sum(
+        (it.judge_confidence - (1.0 if it.judge_correct else 0.0)) ** 2
+        for it in items
+    ) / len(items)
+
+
 @dataclass(frozen=True)
 class CalibrationReport:
     """Summary of a judge's calibration on one item set."""
@@ -95,6 +114,7 @@ class CalibrationReport:
     agreement: float
     kappa: float
     ece: float
+    brier: float
     bins: list[Bin]
 
 
@@ -106,5 +126,6 @@ def calibration_report(items: list[Item], n_bins: int = 5) -> CalibrationReport:
         agreement=agreement_rate(items),
         kappa=cohens_kappa(items),
         ece=expected_calibration_error(items, n_bins),
+        brier=brier_score(items),
         bins=reliability_bins(items, n_bins),
     )

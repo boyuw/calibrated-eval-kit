@@ -23,6 +23,7 @@ def print_calibration() -> None:
     print(f"agreement:        {report.agreement:.3f}")
     print(f"Cohen's kappa:    {report.kappa:.3f}")
     print(f"ECE (5 bins):     {report.ece:.3f}")
+    print(f"Brier score:      {report.brier:.3f}")
     print()
     print(f"{'conf bin':<12}{'n':>4}{'mean conf':>11}{'accuracy':>10}")
     for b in report.bins:

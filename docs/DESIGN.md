@@ -47,6 +47,15 @@ needs no schema language. Known quirk, accepted at this scale:
 `isinstance(True, int)` is `True`, so a boolean would pass an `int`
 check. A production system would want a stricter validator.
 
+**Brier score sits alongside ECE in the report.** ECE measures
+calibration only, and only on bin averages; the Brier score is the
+mean squared error of each stated confidence against correctness, so
+it needs no binning and penalises a confident error on a single item.
+It is a proper scoring rule — minimised in expectation only by stating
+the true probability of being right — but it mixes calibration with
+resolution, so the report carries both numbers and the demo prints
+both.
+
 **Exports keep empty bins, with a signed gap.** The reliability-diagram
 export (`evalkit.export`) is the same binning as the report, serialized
 for embedding or plotting. Empty bins stay in the table with null/blank
