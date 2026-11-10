@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from .bootstrap import ece_ci, kappa_ci
 from .calibration import calibration_report
 from .data import load_items
 from .export import reliability_table_csv
@@ -32,6 +33,20 @@ def print_calibration() -> None:
         close = "]" if b.upper == 1.0 else ")"  # top bin includes confidence 1.0
         print(f"[{b.lower:.1f}, {b.upper:.1f}{close}{'':<5}{b.count:>4}"
               f"{b.mean_confidence:>11.2f}{b.accuracy:>10.2f}")
+    print()
+
+
+def print_bootstrap_cis() -> None:
+    items = load_items(EXAMPLES)
+    kappa = kappa_ci(items, n_boot=1000, seed=0)
+    ece = ece_ci(items, n_boot=1000, seed=0)
+    print("== Bootstrap 95% intervals (percentile, 1000 replicates, seed 0) ==")
+    print(f"Cohen's kappa:    {kappa.estimate:.3f}  "
+          f"[{kappa.lower:.3f}, {kappa.upper:.3f}]")
+    print(f"ECE (5 bins):     {ece.estimate:.3f}  "
+          f"[{ece.lower:.3f}, {ece.upper:.3f}]")
+    print("On 24 items the kappa interval spans zero: the point estimate")
+    print("0.364 does not establish that the judge beats chance.")
     print()
 
 
@@ -70,6 +85,7 @@ def print_trajectory() -> None:
 
 def main() -> None:
     print_calibration()
+    print_bootstrap_cis()
     print_reliability_export()
     print_trajectory()
 

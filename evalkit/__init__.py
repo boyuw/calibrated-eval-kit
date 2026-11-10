@@ -1,5 +1,6 @@
 """calibrated-eval-kit: minimal tools for calibrated LLM/agent evaluation."""
 
+from .bootstrap import BootstrapInterval, bootstrap_ci, ece_ci, kappa_ci
 from .calibration import (
     CalibrationReport,
     agreement_rate,
@@ -23,6 +24,7 @@ from .trajectory import ExpectedStep, TrajectoryScore, score_trajectory
 __version__ = "0.1.0"
 
 __all__ = [
+    "BootstrapInterval",
     "CalibrationReport",
     "ExpectedStep",
     "Item",
@@ -32,13 +34,16 @@ __all__ = [
     "MockJudge",
     "TrajectoryScore",
     "agreement_rate",
+    "bootstrap_ci",
     "brier_score",
     "calibration_report",
     "check_no_leakage",
     "cohens_kappa",
+    "ece_ci",
     "expected_calibration_error",
     "item_from_judge_output",
     "judge_items",
+    "kappa_ci",
     "load_items",
     "reliability_bins",
     "reliability_table",

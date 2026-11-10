@@ -56,6 +56,18 @@ the true probability of being right — but it mixes calibration with
 resolution, so the report carries both numbers and the demo prints
 both.
 
+**Bootstrap intervals are percentile, seeded, stdlib-only.**
+`evalkit.bootstrap` resamples the items with replacement
+(`random.Random(seed).choices`), recomputes the statistic on each
+replicate, and reads the interval off the replicate quantiles — no
+normal approximation, no extra dependency. The same seed always gives
+the same interval, which is what makes the interval itself testable
+(the tests pin the seed-0 values on the bundled items). Percentile is
+the simplest honest choice at this scale: no bias correction (BCa) and
+no studentized interval, and the docstring says so. A degenerate item
+set collapses the interval to the point estimate instead of erroring,
+because that is the correct answer for a set with no variation.
+
 **Exports keep empty bins, with a signed gap.** The reliability-diagram
 export (`evalkit.export`) is the same binning as the report, serialized
 for embedding or plotting. Empty bins stay in the table with null/blank
@@ -76,10 +88,11 @@ because reasonable teams disagree.
   the offline stand-in, so the boundary is a documented interface
   rather than an ad-hoc conversion in each caller. This keeps the kit
   model-agnostic and testable offline.
-- **No statistics beyond point estimates.** No confidence intervals, no
-  bootstrap, no significance tests. On 24 items a kappa without an
-  interval is a conversation starter, not a result — the kit does not
-  pretend otherwise.
+- **No statistics beyond percentile-bootstrap intervals.** No
+  significance tests, no BCa or studentized intervals. On 24 items a
+  kappa without an interval is a conversation starter, not a result —
+  the kit now says so with a number, but it does not pretend the
+  percentile interval is the last word on the sampling distribution.
 - **No semantic duplicate detection.** Embedding-based near-duplicate
   search would catch more leakage but needs a model and a vector store;
   normalized-text matching covers the common cases.
