@@ -3,6 +3,12 @@
 An evaluation item is one judged output: a prompt, an optional reference,
 a human (gold) label, and a judge label with a confidence in [0, 1].
 Labels are categorical strings, e.g. "correct" / "incorrect".
+
+Items may also carry an optional list of tags — free-form strings such as
+a task type ("math", "code-review") or a data source — in a "tags" field.
+Tags are the grouping key for per-slice calibration (see evalkit.slices);
+an item with no tags belongs to no slice and lands in the "<untagged>"
+slice. Tags are metadata only: they never affect the metrics themselves.
 """
 
 from __future__ import annotations
@@ -22,6 +28,7 @@ class Item:
     human_label: str
     judge_label: str
     judge_confidence: float
+    tags: tuple[str, ...] = ()  # e.g. task type or source; see evalkit.slices
 
     @property
     def judge_correct(self) -> bool:
@@ -39,6 +46,9 @@ def _parse_item(raw: dict, lineno: int) -> Item:
     confidence = raw["judge_confidence"]
     if not isinstance(confidence, (int, float)) or not 0.0 <= confidence <= 1.0:
         raise ValueError(f"line {lineno}: judge_confidence must be in [0, 1]")
+    tags = raw.get("tags", [])
+    if not isinstance(tags, list) or not all(isinstance(t, str) for t in tags):
+        raise ValueError(f"line {lineno}: tags must be a list of strings")
     return Item(
         id=str(raw["id"]),
         prompt=str(raw["prompt"]),
@@ -46,6 +56,7 @@ def _parse_item(raw: dict, lineno: int) -> Item:
         human_label=str(raw["human_label"]),
         judge_label=str(raw["judge_label"]),
         judge_confidence=float(confidence),
+        tags=tuple(tags),
     )
 
 

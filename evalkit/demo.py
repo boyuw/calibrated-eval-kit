@@ -11,9 +11,11 @@ from .bootstrap import ece_ci, kappa_ci
 from .calibration import calibration_report
 from .data import load_items
 from .export import reliability_table_csv
+from .slices import per_slice_calibration
 from .trajectory import ExpectedStep, Trace, score_trajectory
 
 EXAMPLES = Path(__file__).parent / "examples" / "items.jsonl"
+CODE_REVIEW = Path(__file__).parent / "examples" / "code_review.jsonl"
 
 
 def print_calibration() -> None:
@@ -34,6 +36,21 @@ def print_calibration() -> None:
         print(f"[{b.lower:.1f}, {b.upper:.1f}{close}{'':<5}{b.count:>4}"
               f"{b.mean_confidence:>11.2f}{b.accuracy:>10.2f}")
     print()
+
+
+def print_per_slice() -> None:
+    for path, label in ((EXAMPLES, "general knowledge"),
+                        (CODE_REVIEW, "code review")):
+        items = load_items(path)
+        reports = per_slice_calibration(items)
+        print(f"== Per-slice calibration ({label}: {len(items)} items) ==")
+        print(f"{'slice':<12}{'n':>4}{'agreement':>11}{'kappa':>8}"
+              f"{'ECE':>8}{'Brier':>8}")
+        for r in reports:
+            flag = "" if r.reliable else "  (n < 5: small slice, treat with caution)"
+            print(f"{r.name:<12}{r.n_items:>4}{r.agreement:>11.3f}"
+                  f"{r.kappa:>8.3f}{r.ece:>8.3f}{r.brier:>8.3f}{flag}")
+        print()
 
 
 def print_bootstrap_cis() -> None:
@@ -85,6 +102,7 @@ def print_trajectory() -> None:
 
 def main() -> None:
     print_calibration()
+    print_per_slice()
     print_bootstrap_cis()
     print_reliability_export()
     print_trajectory()

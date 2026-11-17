@@ -18,6 +18,7 @@ from .export import (
     rows_from_bins,
 )
 from .judges import JudgeAdapter, JudgeOutput, MockJudge, item_from_judge_output, judge_items
+from .slices import UNTAGGED, SliceReport, per_slice_calibration
 from .splits import LeakageError, check_no_leakage, split_items
 from .trajectory import ExpectedStep, TrajectoryScore, score_trajectory
 
@@ -32,7 +33,9 @@ __all__ = [
     "JudgeOutput",
     "LeakageError",
     "MockJudge",
+    "SliceReport",
     "TrajectoryScore",
+    "UNTAGGED",
     "agreement_rate",
     "bootstrap_ci",
     "brier_score",
@@ -45,6 +48,7 @@ __all__ = [
     "judge_items",
     "kappa_ci",
     "load_items",
+    "per_slice_calibration",
     "reliability_bins",
     "reliability_table",
     "reliability_table_csv",

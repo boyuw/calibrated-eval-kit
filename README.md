@@ -64,15 +64,43 @@ sample-size problem explicit: on 24 items the kappa interval spans zero,
 so the point estimate 0.364 does not establish that the judge beats
 chance. (Run the demo for the full per-bin table.)
 
+The aggregate hides where the judge actually fails. The example items
+carry a `tags` field (task type, e.g. `math`, `cs`, `science`), and the
+demo prints the same report per slice — agreement, kappa, ECE, Brier —
+via `evalkit.slices.per_slice_calibration(items)`:
+
+```
+== Per-slice calibration (general knowledge: 24 items) ==
+slice          n  agreement   kappa     ECE   Brier
+cs             5      0.400  -0.154   0.722   0.587
+culture        2      1.000   1.000   0.095   0.010  (n < 5: small slice, treat with caution)
+geography      4      0.750   0.500   0.208   0.094  (n < 5: small slice, treat with caution)
+math           6      0.667   0.333   0.178   0.191
+science        7      0.857   0.696   0.051   0.089
+```
+
+The judge is roughly honest on science (ECE 0.051) and badly
+overconfident on CS questions (ECE 0.722, kappa −0.154) — invisible in
+the aggregate ECE of 0.161. Small slices are still reported, with their
+n, but flagged: the culture slice's perfect kappa on 2 items is not
+evidence of anything. Tags are optional metadata in the JSONL; an item
+with several tags is counted in each of its slices, and untagged items
+land in a `"<untagged>"` slice instead of vanishing. Pass a custom key
+function to slice by anything else, e.g. a source field or a confidence
+band.
+
 Input format is JSONL, one item per line:
 
 ```json
 {"id": "item-01", "prompt": "...", "reference": "Canberra",
- "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.98}
+ "human_label": "correct", "judge_label": "correct", "judge_confidence": 0.98,
+ "tags": ["geography"]}
 ```
 
 Labels are categorical strings; the human label is the gold standard and
-the judge label is the judge's verdict on the same output.
+the judge label is the judge's verdict on the same output. `tags` is
+optional — a list of strings such as a task type or data source, used
+for per-slice calibration (see above).
 
 ## Modules
 
@@ -81,6 +109,7 @@ the judge label is the judge's verdict on the same output.
 | `evalkit.data` | Load and validate items from JSONL. |
 | `evalkit.judges` | Judge-adapter interface (`JudgeOutput`, `MockJudge`, `judge_items`): how a real judge's verdict becomes an `Item`. |
 | `evalkit.calibration` | Agreement, Cohen's kappa, reliability bins, ECE, Brier score, full report. |
+| `evalkit.slices` | Per-slice calibration: the same report per item tag (or any key function) — `per_slice_calibration(items)` returns a `SliceReport` per slice, with small slices flagged, not dropped. |
 | `evalkit.bootstrap` | Percentile-bootstrap confidence intervals for kappa and ECE (seeded, stdlib only): `kappa_ci(items)`, `ece_ci(items)`, or `bootstrap_ci(statistic, items)` for any item-level statistic. |
 | `evalkit.export` | Reliability-diagram data export: per-bin table (mean confidence, accuracy, count, gap) as rows, CSV, or JSON — e.g. `reliability_table_csv(items)` for README embedding. Empty bins are kept, with null/blank metrics. |
 | `evalkit.splits` | Hash-based deterministic dev/held-out split; leakage check by id and by normalized prompt text. |

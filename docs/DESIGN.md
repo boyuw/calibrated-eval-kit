@@ -74,6 +74,21 @@ for embedding or plotting. Empty bins stay in the table with null/blank
 metrics rather than vanishing, and the gap column is accuracy minus mean
 confidence, so a negative gap reads as overconfidence in that bin.
 
+**Per-slice calibration reuses the whole-set report, and flags small
+slices instead of dropping them.** `evalkit.slices.per_slice_calibration`
+groups items by a key — by default the item's `tags` — and runs the
+ordinary `calibration_report` on each group, so a slice's numbers are
+by construction the numbers the whole-set functions would give on that
+subset (the tests pin this). A slice below `min_n` (default 5) is still
+reported with its n and a `reliable=False` flag: dropping it would hide
+exactly the groups where the judge is most likely untested, and a
+kappa of 1.0 on two items needs its n printed next to it to be read
+honestly. An item with several tags is counted in each of its slices,
+so slice counts sum to the total only for single-valued keys; items
+with no tags land in `"<untagged>"` rather than vanishing. The key is
+a plain callable, so slicing by a source field or a confidence band
+needs no new code path.
+
 **Weights are parameters with stated defaults.** The trajectory default
 (0.8 steps / 0.2 final state) reflects a belief: process matters more
 than outcome, but outcome still matters. It is a parameter precisely
@@ -103,8 +118,7 @@ because reasonable teams disagree.
 
 ## When to outgrow it
 
-If you need judge ensembles, per-slice calibration (by task type, by
-model version), drift monitoring over time, or trace alignment under
+If you need judge ensembles, drift monitoring over time, or trace alignment under
 reordering and retries, you have left toy scale — take the data model
 (`Item`, `ExpectedStep`) and the metric definitions with you; they are
 the parts designed to survive.
