@@ -89,6 +89,37 @@ land in a `"<untagged>"` slice instead of vanishing. Pass a custom key
 function to slice by anything else, e.g. a source field or a confidence
 band.
 
+## Which metric when
+
+- **Agreement** — the headline sanity check: did the judge mostly agree
+  with the humans? Use it for a first look and for non-technical
+  summaries. Never a verdict on its own: on an item set that is mostly
+  one label, a judge that always answers that label scores high
+  agreement while knowing nothing.
+- **Cohen's kappa** — use it when you compare judges, or when the label
+  distribution is skewed. It subtracts the agreement you would get by
+  chance from the two sides' label marginals, so the bundled example's
+  0.708 agreement becomes a 0.364 kappa: better than chance, but weak.
+  On a single-label item set it is degenerate — the kit returns 1.0 if
+  the judge always agrees, else 0.0 — so agreement is the honest number
+  there.
+- **ECE** — use it when the confidence numbers themselves drive a
+  decision: gating, routing, abstention thresholds. It is the
+  count-weighted mean gap between a confidence bin's accuracy and its
+  mean confidence. Always read it with the per-bin table — an aggregate
+  ECE of 0.161 can hide a 0.92-confidence bin that is only 75% right —
+  and remember it is blind to errors that cancel inside a bin.
+- **Brier score** — use it to rank judges on the same item set with a
+  single number. It needs no binning and punishes confident errors item
+  by item (0.212 on the bundled items). It mixes calibration with
+  resolution, so read it alongside ECE, not instead of it: a judge can
+  score well by being well calibrated on easy items.
+
+One rule for all four: on a small item set, report the bootstrap
+interval, not just the point estimate. On the bundled 24 items the kappa
+interval [-0.059, 0.731] spans zero — the point estimate 0.364 does not
+establish that the judge beats chance.
+
 Input format is JSONL, one item per line:
 
 ```json
