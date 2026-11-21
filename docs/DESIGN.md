@@ -89,6 +89,18 @@ with no tags land in `"<untagged>"` rather than vanishing. The key is
 a plain callable, so slicing by a source field or a confidence band
 needs no new code path.
 
+**Weighted kappa is opt-in, with the label order as an argument.**
+Plain kappa needs no ordering, so it stays the default everywhere —
+`calibration_report` carries `weighted_kappa=None` unless the caller
+passes the ordered label list. The order is a parameter, not inferred
+from the data: sorting label strings would silently impose an order
+("10" before "2", "high" before "low") that the data does not carry.
+Linear weights are the default because they are the least surprising
+partial-credit scheme — half a point per step; quadratic is one
+keyword away for the case where a far miss is the failure that
+matters. Both are the standard Cicchetti–Allison / Fleiss–Cohen
+forms, tested against hand-computed values.
+
 **Weights are parameters with stated defaults.** The trajectory default
 (0.8 steps / 0.2 final state) reflects a belief: process matters more
 than outcome, but outcome still matters. It is a parameter precisely

@@ -103,6 +103,18 @@ band.
   On a single-label item set it is degenerate — the kit returns 1.0 if
   the judge always agrees, else 0.0 — so agreement is the honest number
   there.
+- **Weighted kappa** — use it instead of plain kappa when the labels
+  are ordered, e.g. 1–5 star ratings: it gives partial credit for near
+  misses, so a judge that is off by one star is not scored like a judge
+  that is off by four. Pass the label order, low to high, to
+  `weighted_kappa(items, labels)`; the default linear weights charge
+  half a point per step, while quadratic weights forgive a one-step
+  miss more and punish a far miss harder. On the demo's 12-item rating
+  set the three numbers tell the story: plain kappa 0.374, linear
+  0.571, quadratic 0.734 — the judge is mostly one star off, and only
+  the two far misses (5 vs 3, 2 vs 4) keep the weighted values down.
+  With two labels the weights are 1 on the diagonal and 0 off it, so
+  weighted kappa is exactly plain kappa.
 - **ECE** — use it when the confidence numbers themselves drive a
   decision: gating, routing, abstention thresholds. It is the
   count-weighted mean gap between a confidence bin's accuracy and its
@@ -139,7 +151,7 @@ for per-slice calibration (see above).
 |---|---|
 | `evalkit.data` | Load and validate items from JSONL. |
 | `evalkit.judges` | Judge-adapter interface (`JudgeOutput`, `MockJudge`, `judge_items`): how a real judge's verdict becomes an `Item`. |
-| `evalkit.calibration` | Agreement, Cohen's kappa, reliability bins, ECE, Brier score, full report. |
+| `evalkit.calibration` | Agreement, Cohen's kappa, weighted kappa for ordinal labels, reliability bins, ECE, Brier score, full report. |
 | `evalkit.slices` | Per-slice calibration: the same report per item tag (or any key function) — `per_slice_calibration(items)` returns a `SliceReport` per slice, with small slices flagged, not dropped. |
 | `evalkit.bootstrap` | Percentile-bootstrap confidence intervals for kappa and ECE (seeded, stdlib only): `kappa_ci(items)`, `ece_ci(items)`, or `bootstrap_ci(statistic, items)` for any item-level statistic. |
 | `evalkit.export` | Reliability-diagram data export: per-bin table (mean confidence, accuracy, count, gap) as rows, CSV, or JSON — e.g. `reliability_table_csv(items)` for README embedding. Empty bins are kept, with null/blank metrics. |

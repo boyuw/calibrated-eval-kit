@@ -8,8 +8,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from .bootstrap import ece_ci, kappa_ci
-from .calibration import calibration_report
-from .data import load_items
+from .calibration import calibration_report, cohens_kappa, weighted_kappa
+from .data import Item, load_items
 from .export import reliability_table_csv
 from .slices import per_slice_calibration
 from .trajectory import ExpectedStep, Trace, score_trajectory
@@ -67,6 +67,31 @@ def print_bootstrap_cis() -> None:
     print()
 
 
+def print_weighted_kappa() -> None:
+    # A 1–5 star rating judge: the labels are ordered, so a miss by one
+    # star is a smaller error than a miss across the scale. Plain kappa
+    # counts both as failures; weighted kappa gives partial credit.
+    labels = ["1", "2", "3", "4", "5"]
+    pairs = [
+        ("5", "5"), ("5", "5"), ("4", "4"), ("4", "5"), ("3", "3"),
+        ("3", "4"), ("2", "2"), ("2", "3"), ("1", "1"), ("1", "2"),
+        ("5", "3"), ("2", "4"),
+    ]
+    items = [
+        Item(id=f"rating-{i}", prompt="rate this answer", reference=None,
+             human_label=human, judge_label=judge, judge_confidence=0.9)
+        for i, (human, judge) in enumerate(pairs)
+    ]
+    print("== Weighted kappa (1–5 star ratings, 12 items) ==")
+    print(f"plain kappa:        {cohens_kappa(items):.3f}")
+    print(f"linear-weighted:    {weighted_kappa(items, labels):.3f}")
+    print(f"quadratic-weighted: {weighted_kappa(items, labels, weights='quadratic'):.3f}")
+    print("The two far misses (5 vs 3, 2 vs 4) are what keep the weighted")
+    print("values below 1.0; the one-star misses cost little under the")
+    print("quadratic weights and half a point under the linear ones.")
+    print()
+
+
 def print_reliability_export() -> None:
     items = load_items(EXAMPLES)
     print("== Reliability diagram data (CSV) ==")
@@ -102,6 +127,7 @@ def print_trajectory() -> None:
 
 def main() -> None:
     print_calibration()
+    print_weighted_kappa()
     print_per_slice()
     print_bootstrap_cis()
     print_reliability_export()

@@ -43,6 +43,57 @@ def cohens_kappa(items: list[Item]) -> float:
     return (p_o - p_e) / (1.0 - p_e)
 
 
+def weighted_kappa(items: list[Item], labels: list[str], weights: str = "linear") -> float:
+    """Weighted Cohen's kappa for ordinal labels.
+
+    Plain kappa treats every disagreement alike; when the labels are
+    ordered (e.g. 1–5 star ratings) a miss by one step is a smaller error
+    than a miss across the whole scale, and weighted kappa gives partial
+    credit for near misses. ``labels`` is the label order, low to high;
+    it must list every label that appears in the items.
+
+    ``weights`` is "linear" (Cicchetti–Allison, w = 1 - |i-j|/(k-1)) or
+    "quadratic" (Fleiss–Cohen, w = 1 - (i-j)^2/(k-1)^2). Quadratic
+    forgives near misses more and punishes far misses harder, so it is
+    the usual choice when a one-step error is genuinely minor and a
+    far miss is the failure that matters. The weighted observed and
+    expected agreements are computed the same way as plain kappa, with
+    each cell weighted: kappa_w = (p_o_w - p_e_w) / (1 - p_e_w).
+    """
+    _require(items)
+    if weights not in ("linear", "quadratic"):
+        raise ValueError('weights must be "linear" or "quadratic"')
+    labels = list(labels)
+    if len(set(labels)) != len(labels):
+        raise ValueError("labels must be unique")
+    if len(labels) < 2:
+        raise ValueError("at least two ordered labels are required")
+    index = {label: i for i, label in enumerate(labels)}
+    for it in items:
+        if it.human_label not in index or it.judge_label not in index:
+            raise ValueError(f"item labels must be in labels: {it.human_label!r} / {it.judge_label!r}")
+    k = len(labels)
+    n = len(items)
+    human = Counter(it.human_label for it in items)
+    judge = Counter(it.judge_label for it in items)
+
+    def weight(i: int, j: int) -> float:
+        d = abs(i - j)
+        if weights == "linear":
+            return 1.0 - d / (k - 1)
+        return 1.0 - (d * d) / ((k - 1) ** 2)
+
+    p_o_w = sum(weight(index[it.human_label], index[it.judge_label]) for it in items) / n
+    p_e_w = sum(
+        weight(i, j) * (human[labels[i]] / n) * (judge[labels[j]] / n)
+        for i in range(k)
+        for j in range(k)
+    )
+    if p_e_w == 1.0:  # both sides use a single label; kappa is degenerate
+        return 1.0 if p_o_w == 1.0 else 0.0
+    return (p_o_w - p_e_w) / (1.0 - p_e_w)
+
+
 @dataclass(frozen=True)
 class Bin:
     """One reliability bin over judge confidence."""
@@ -116,10 +167,21 @@ class CalibrationReport:
     ece: float
     brier: float
     bins: list[Bin]
+    weighted_kappa: float | None = None  # only when labels are supplied
 
 
-def calibration_report(items: list[Item], n_bins: int = 5) -> CalibrationReport:
-    """Compute the full calibration summary for a set of items."""
+def calibration_report(
+    items: list[Item],
+    n_bins: int = 5,
+    labels: list[str] | None = None,
+    weights: str = "linear",
+) -> CalibrationReport:
+    """Compute the full calibration summary for a set of items.
+
+    Pass ``labels`` (the ordered label list, low to high) to also compute
+    the weighted kappa for ordinal labels; without it the report carries
+    ``weighted_kappa=None``.
+    """
     _require(items)
     return CalibrationReport(
         n_items=len(items),
@@ -128,4 +190,5 @@ def calibration_report(items: list[Item], n_bins: int = 5) -> CalibrationReport:
         ece=expected_calibration_error(items, n_bins),
         brier=brier_score(items),
         bins=reliability_bins(items, n_bins),
+        weighted_kappa=weighted_kappa(items, labels, weights) if labels is not None else None,
     )

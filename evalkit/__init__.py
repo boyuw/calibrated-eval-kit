@@ -9,6 +9,7 @@ from .calibration import (
     cohens_kappa,
     expected_calibration_error,
     reliability_bins,
+    weighted_kappa,
 )
 from .data import Item, load_items
 from .export import (
@@ -56,4 +57,5 @@ __all__ = [
     "rows_from_bins",
     "score_trajectory",
     "split_items",
+    "weighted_kappa",
 ]
